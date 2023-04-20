@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Rotacion de dos rectangulos</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from 'https://sebastiann16.github.io/CompG/three.module.js';
+    import { OrbitControls } from 'https://sebastiann16.github.io/CompG/OrbitControls.js';
+    var WIDTH = window.innerWidth;
+    var HEIGHT = window.innerHeight;
+
+/*Crear la escena 
+*/
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(WIDTH, HEIGHT);
+    renderer.setClearColor(0xDDDDDD, 1);
+    document.body.appendChild(renderer.domElement);
+
+    var scene = new THREE.Scene();
+/*posicionar la cámara
+*/
+    var camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT);
+    camera.position.z = 20;
+    camera.position.y = 5;
+    scene.add(camera);
+    const light = new THREE.AmbientLight(0x404040, 5);
+    scene.add(light);
+   
+    
+//Arreglo de colores para cada cubo (hexadecimal)
+    const color = [0x660B0B, 0x84B342];
+
+/*Funcion Cubo: Crea la geometria y el material del cubo 
+ ENTRADAS: base: base del cubo (entero)
+           altura: alto del cubo (entero)
+           ancho: ancho del cubo (entero)
+           col: color del material(arreglo de colores)
+
+SALIDAS: retorna el cubo con geometria y material
+*/
+
+    function cubo(base, altura, ancho, colo) {
+      const geometry = new THREE.BoxGeometry(base, altura, ancho);
+      const material = new THREE.MeshMatcapMaterial({ color: colo });
+      return new THREE.Mesh(geometry, material);
+    }
+
+    function Traslacion (cubo, tx,ty,tz){
+
+        cubo.position.x=tx 
+        cubo.position.y=ty
+        cubo.position.z=tz
+
+    }
+
+    function rotacion (cubo, rx,ry,rz){
+
+        cubo.rotation.x=rx
+        cubo.rotation.y=ry
+        cubo.rotation.z=rz
+    }
+
+
+    var lado = 6;
+    var alfa=Math.PI/4
+    const cubo1 = cubo(lado/8, lado, lado/8, 0x4B29CA)
+    scene.add(cubo1)
+
+    const cubo2 = cubo(lado/8, lado, lado/8, 0x28A500)
+    scene.add(cubo2)
+
+    Traslacion(cubo1,0,lado/2,0)
+    Traslacion(cubo2,0,3*lado/2,0)
+
+    rotacion(cubo2,0,0,Math.PI-alfa)
+
+
+
+//controlador de camara orbitcontrols
+    const controls = new OrbitControls(camera, renderer.domElement);
+    const axesHelper = new THREE.AxesHelper( 1000 ); //flechas del plano
+    scene.add( axesHelper );
+
+    const size = 1000;
+const divisions = 1000;
+//añadir la malla
+const gridHelper = new THREE.GridHelper( size, divisions );
+scene.add( gridHelper );
+
+
+    function animate() {
+
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera)
+    }
+    animate();
+  </script>
+</body>
+
+</html>
